@@ -160,4 +160,32 @@ class ProductController extends Controller {
         }
     }
 
+    /**
+     * Provides a form so that product administrators can
+     * associate other users to the product
+     */
+    public function actionAdduser($id) {
+        $product = $this->loadModel($id);
+        if (!Yii::app()->user->checkAccess('createUser', array('product' => $product))) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
+        $form = new ProductUserForm;
+// collect user input data
+        if (isset($_POST['ProductUserForm'])) {
+            $form->attributes = $_POST['ProductUserForm'];
+            $form->product = $product;
+// validate user input
+            if ($form->validate()) {
+                if ($form->assign()) {
+                    Yii::app()->user->setFlash('success', $form->email . " has been added to the product.");
+//reset the form for another user to be associated if desired
+                    $form->unsetAttributes();
+                    $form->clearErrors();
+                }
+            }
+        }
+        $form->product = $product;
+        $this->render('adduser', array('model' => $form));
+    }
+
 }
