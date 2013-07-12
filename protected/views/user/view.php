@@ -26,5 +26,6 @@ $this->menu=array(
 		'password',
 		'company_name',
 		'business_reg_id',
+		'role',
 	),
 )); ?>

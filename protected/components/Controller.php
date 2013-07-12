@@ -33,17 +33,22 @@ class Controller extends CController {
         return array(
             array('allow', // allow all users to perform 'index' and 'view'actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('index', 'view','addUser'),
-                'users' => array('@'),
+                'actions' => array('index', 'view'),
+                'users' => array('*'),
+            ),
+            array('allow', // allow all users to perform 'index' and 'view'actions
+                'controllers' => array('user'),
+                'actions' => array('create'),
+                'users' => array('*'),
             ),
             array('allow', // allow authenticated user to perform 'create' and'update' actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('create', 'update'),
+                'actions' => array('update', 'addUser', 'delete'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete'actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('admin', 'delete'),
+                'actions' => array('admin'),
                 'users' => array('admin'),
             ),
             array('deny', // deny all users

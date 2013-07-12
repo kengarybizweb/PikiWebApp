@@ -50,6 +50,7 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'password',
 		'company_name',
 		'business_reg_id',
+		'role',
 		array(
 			'class'=>'CButtonColumn',
 		),

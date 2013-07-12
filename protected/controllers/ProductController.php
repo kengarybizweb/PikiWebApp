@@ -187,5 +187,4 @@ class ProductController extends Controller {
         $form->product = $product;
         $this->render('adduser', array('model' => $form));
     }
-
 }

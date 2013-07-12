@@ -25,5 +25,9 @@
 	<?php echo CHtml::encode($data->business_reg_id); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('role')); ?>:</b>
+	<?php echo CHtml::encode($data->role); ?>
+	<br />
+
 
 </div>

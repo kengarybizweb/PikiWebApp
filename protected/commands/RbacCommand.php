@@ -41,9 +41,9 @@ class RbacCommand extends CConsoleCommand {
             $this->_authManager->createOperation(
                     "updateUser", "update a users in-formation");
             $this->_authManager->createOperation(
-                    "deleteUser", "remove a user from a project");
+                    "deleteUser", "remove a user from a product");
 
-            //create the lowest level operations for projects
+            //create the lowest level operations for products
             $this->_authManager->createOperation(
                     "createProduct", "create a new product");
             $this->_authManager->createOperation(
@@ -61,7 +61,7 @@ class RbacCommand extends CConsoleCommand {
             $this->_authManager->createOperation(
                     "updateRfq", "update rfq information");
             $this->_authManager->createOperation(
-                    "deleteRfq", "delete an rfq from a project");
+                    "deleteRfq", "delete an rfq from a product");
 
             //create the reader role and add the appropriate 
             //permissions as children to this role

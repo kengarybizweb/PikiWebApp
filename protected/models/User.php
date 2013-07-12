@@ -9,10 +9,12 @@
  * @property string $password
  * @property string $company_name
  * @property string $business_reg_id
+ * @property string $role
  *
  * The followings are the available model relations:
  * @property Rfq[] $rfqs
  * @property RfqProductAssignment[] $pikiRfqProductAssignments
+ * @property TblAuthItem $role0
  * @property Product[] $pikiProducts
  */
 class User extends CActiveRecord {
@@ -36,21 +38,16 @@ class User extends CActiveRecord {
     /**
      * @return array validation rules for model attributes.
      */
-    public $password_repeat;
-
     public function rules() {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('email, password, password_repeat, company_name, business_reg_id', 'required'),
+            array('email, password, company_name, business_reg_id', 'required'),
             array('email, password, company_name, business_reg_id', 'length', 'max' => 255),
-            array('email', 'unique'),
-            array('email', 'email'),
-            array('password', 'compare'),
-            array('password_repeat', 'safe'),
+            array('role', 'in', 'range'=>array('member','owner','reader','admin'),'allowEmpty'=>false),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
-            array(' email, company_name, business_reg_id', 'safe', 'on' => 'search'),
+            array('id, email, password, company_name, business_reg_id, role', 'safe', 'on' => 'search'),
         );
     }
 
@@ -63,6 +60,7 @@ class User extends CActiveRecord {
         return array(
             'rfqs' => array(self::HAS_MANY, 'Rfq', 'userid'),
             'pikiRfqProductAssignments' => array(self::MANY_MANY, 'RfqProductAssignment', 'piki_rfq_product_user_assignment(userid, rfqproductid)'),
+            'role0' => array(self::BELONGS_TO, 'TblAuthItem', 'role'),
             'pikiProducts' => array(self::MANY_MANY, 'Product', 'piki_user_product_assignment(userid, productid)'),
         );
     }
@@ -77,6 +75,7 @@ class User extends CActiveRecord {
             'password' => 'Password',
             'company_name' => 'Company Name',
             'business_reg_id' => 'Business Reg',
+            'role' => 'Role',
         );
     }
 
@@ -95,39 +94,10 @@ class User extends CActiveRecord {
         $criteria->compare('password', $this->password, true);
         $criteria->compare('company_name', $this->company_name, true);
         $criteria->compare('business_reg_id', $this->business_reg_id, true);
+        $criteria->compare('role', $this->role, true);
 
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
     }
-
-    /**
-     * Generates the password hash.
-     * @param string password
-     * @return string hash
-     */
-    public function hashPassword($password) {
-        return md5($password);
-        // return crypt($password, $this->generateSalt());
-    }
-
-    /**
-     * Apply a hash on the password before we store it in the database
-     */
-    protected function afterValidate() {
-        parent::afterValidate();
-        if (!$this->hasErrors())
-            $this->password = $this->hashPassword($this->password);
-    }
-
-    /**
-     * Checks if the given password is correct.
-     * @param string the password to be validated
-     * @return boolean whether the password is valid
-     */
-    public function validatePassword($password) {
-        return $this->hashPassword($password) === $this->password;
-        //return crypt($password,$this->password)===$this->password;
-    }
-
 }
