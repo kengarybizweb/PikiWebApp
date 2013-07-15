@@ -8,6 +8,7 @@
 class UserIdentity extends CUserIdentity {
 
     private $_id;
+    private $_role;
 
     /**
      * Authenticates a user.
@@ -39,6 +40,7 @@ class UserIdentity extends CUserIdentity {
             $this->errorCode = self::ERROR_PASSWORD_INVALID;
         else {
             $this->_id = $user->id;
+            $this->setState('role', $user->role); 
             $this->username = $user->email;
             $this->errorCode = self::ERROR_NONE;
         }
@@ -48,5 +50,4 @@ class UserIdentity extends CUserIdentity {
     public function getId() {
         return $this->_id;
     }
-
 }

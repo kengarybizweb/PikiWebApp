@@ -44,7 +44,7 @@ class User extends CActiveRecord {
         return array(
             array('email, password, company_name, business_reg_id', 'required'),
             array('email, password, company_name, business_reg_id', 'length', 'max' => 255),
-            array('role', 'in', 'range'=>array('member','owner','reader','admin'),'allowEmpty'=>false),
+            array('role', 'in', 'range' => array('member', 'owner', 'reader', 'admin'), 'allowEmpty' => false),
             // The following rule is used by search().
             // Please remove those attributes that should not be searched.
             array('id, email, password, company_name, business_reg_id, role', 'safe', 'on' => 'search'),
@@ -99,5 +99,34 @@ class User extends CActiveRecord {
         return new CActiveDataProvider($this, array(
             'criteria' => $criteria,
         ));
+    }
+
+    /**
+     * Generates the password hash.
+     * @param string password
+     * @return string hash
+     */
+    public function hashPassword($password) {
+        return md5($password);
+        // return crypt($password, $this->generateSalt());
+    }
+
+    /**
+     * Apply a hash on the password before we store it in the database
+     */
+    protected function afterValidate() {
+        parent::afterValidate();
+        if (!$this->hasErrors())
+            $this->password = $this->hashPassword($this->password);
+    }
+
+    /**
+     * Checks if the given password is correct.
+     * @param string the password to be validated
+     * @return boolean whether the password is valid
+     */
+    public function validatePassword($password) {
+        return $this->hashPassword($password) === $this->password;
+        //return crypt($password,$this->password)===$this->password;
     }
 }

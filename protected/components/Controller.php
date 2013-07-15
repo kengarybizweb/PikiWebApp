@@ -36,7 +36,7 @@ class Controller extends CController {
                 'actions' => array('index', 'view'),
                 'users' => array('*'),
             ),
-            array('allow', // allow all users to perform 'index' and 'view'actions
+            array('allow', // allow all users to perform 'create' actions
                 'controllers' => array('user'),
                 'actions' => array('create'),
                 'users' => array('*'),
