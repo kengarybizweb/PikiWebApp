@@ -60,8 +60,12 @@ class ProductController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
-        $model = new Product;
-
+       
+        if (!Yii::app()->user->checkAccess('createProduct')) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
+        
+         $model = new Product;
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
@@ -82,6 +86,9 @@ class ProductController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+        if (!Yii::app()->user->checkAccess('updateProduct')) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -104,6 +111,9 @@ class ProductController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        if (!Yii::app()->user->checkAccess('deleteProduct')) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
         $this->loadModel($id)->delete();
 
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -125,6 +135,7 @@ class ProductController extends Controller {
      * Manages all models.
      */
     public function actionAdmin() {
+
         $model = new Product('search');
         $model->unsetAttributes();  // clear any default values
         if (isset($_GET['Product']))
@@ -187,4 +198,5 @@ class ProductController extends Controller {
         $form->product = $product;
         $this->render('adduser', array('model' => $form));
     }
+
 }

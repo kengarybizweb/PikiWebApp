@@ -14,7 +14,7 @@ $this->menu=array(
 
 if(Yii::app()->user->checkAccess('createUser',array('user'=>$model)))
 {
-        $this->menu[] = array('label'=>'Create User', 'url'=>array('create'));
+        $this->menu[] = array('label'=>'Register', 'url'=>array('create'));
 	$this->menu[] = array('label'=>'Update User', 'url'=>array('update','id'=>$model->id));
 	$this->menu[] =array('label'=>'Delete User', 'url'=>'#', 'linkOptions'=>array('submit'=>array('delete','id'=>$model->id),'confirm'=>'Are you sure you want to delete this item?'));
 	//$this->menu[] =array('label'=>'Manage User', 'url'=>array('admin'));        

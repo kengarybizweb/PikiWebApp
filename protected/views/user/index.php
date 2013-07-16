@@ -11,7 +11,7 @@ $this->menu=array(
 	//array('label'=>'Manage User', 'url'=>array('admin')),
 );
 if(Yii::app()->user->checkAccess('createUser')){
-    $this->menu[] = array('label'=>'Create User', 'url'=>array('create'));
+    $this->menu[] = array('label'=>'Register', 'url'=>array('create'));
 }
 ?>
 

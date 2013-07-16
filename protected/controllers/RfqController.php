@@ -59,6 +59,7 @@ class RfqController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
+       
         $model = new Rfq;
 
         // Uncomment the following line if AJAX validation is needed
@@ -81,6 +82,10 @@ class RfqController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
+               if (!Yii::app()->user->checkAccess('updateRfq')) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
+        
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed
@@ -103,6 +108,9 @@ class RfqController extends Controller {
      * @param integer $id the ID of the model to be deleted
      */
     public function actionDelete($id) {
+        if (!Yii::app()->user->checkAccess('deleteRfq')) {
+            throw new CHttpException(403, 'You are not authorized to perform this action.');
+        }
         $this->loadModel($id)->delete();
 
         // if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser

@@ -84,7 +84,6 @@ class ProductUserForm extends CFormModel {
         }
         return $emails;
     }
-
 }
 
 ?>

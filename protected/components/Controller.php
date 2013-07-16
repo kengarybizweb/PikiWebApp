@@ -31,25 +31,25 @@ class Controller extends CController {
      */
     public function accessRules() {
         return array(
-            array('allow', // allow all users to perform 'index' and 'view'actions
+            array('allow', // allow all users to perform view, view details action
                 'controllers' => array('product', 'rfq', 'user'),
                 'actions' => array('index', 'view'),
                 'users' => array('*'),
             ),
-            array('allow', // allow all users to perform 'create' actions
+            array('allow', // allow all users to perform 'create' actions on user
                 'controllers' => array('user'),
                 'actions' => array('create'),
-                'users' => array('*'),
+                'users' => array('?'),
             ),
-            array('allow', // allow authenticated user to perform 'create' and'update' actions
+            array('allow', // allow authenticated user to perform 'create' and'addUser' actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('update', 'addUser', 'delete'),
+                'actions' => array('create', 'addUser'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete'actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('admin'),
-                'users' => array('admin'),
+                'actions' => array('admin', 'delete', 'update'),
+                'roles' => array('admin'),
             ),
             array('deny', // deny all users
                 'controllers' => array('product', 'rfq', 'user'),

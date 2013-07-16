@@ -9,11 +9,16 @@ $this->breadcrumbs = array(
 
 $this->menu = array(
     array('label' => 'List Product', 'url' => array('index')),
-    array('label' => 'Create Product', 'url' => array('create')),
-    array('label' => 'Update Product', 'url' => array('update', 'id' => $model->id)),
-    array('label' => 'Delete Product', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->id), 'confirm' => 'Are you sure you want to delete this item?')),
-    array('label' => 'Manage Product', 'url' => array('admin')),
+    //array('label' => 'Manage Product', 'url' => array('admin')),
 );
+if(Yii::app()->user->checkAccess('createProduct',array('user'=>$model)))
+{
+        $this->menu[] = array('label' => 'Create Product', 'url' => array('create'));
+	$this->menu[] = array('label' => 'Update Product', 'url' => array('update', 'id' => $model->id));
+	$this->menu[] = array('label' => 'Delete Product', 'url' => '#', 'linkOptions' => array('submit' => array('delete', 'id' => $model->id), 'confirm' => 'Are you sure you want to delete this item?'));
+	//$this->menu[] =array('label'=>'Manage User', 'url'=>array('admin'));        
+}
+
 if (Yii::app()->user->checkAccess('createUser', array('product' => $model))) {
     $this->menu[] = array('label' => 'Add User To Product',
         'url' => array('adduser', 'id' => $model->id));
