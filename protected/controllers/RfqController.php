@@ -61,12 +61,14 @@ class RfqController extends Controller {
     public function actionCreate() {
        
         $model = new Rfq;
-
+        //$productModel->products = array(new Product);
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
         if (isset($_POST['Rfq'])) {
-            $model->attributes = $_POST['Rfq'];
+            //$model->attributes = $_POST['Rfq'];
+            //$model->userid = Yii::app()->user->id;
+            //$mode->created_date = date('Y-m-d H:i:s');
             if ($model->save())
                 $this->redirect(array('view', 'id' => $model->id));
         }
