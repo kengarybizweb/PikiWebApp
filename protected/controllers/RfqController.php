@@ -59,18 +59,41 @@ class RfqController extends Controller {
      * If creation is successful, the browser will be redirected to the 'view' page.
      */
     public function actionCreate() {
-       
+
         $model = new Rfq;
         //$productModel->products = array(new Product);
         // Uncomment the following line if AJAX validation is needed
         // $this->performAjaxValidation($model);
 
         if (isset($_POST['Rfq'])) {
-            //$model->attributes = $_POST['Rfq'];
+            $model->attributes = $_POST['Rfq'];
             //$model->userid = Yii::app()->user->id;
             //$mode->created_date = date('Y-m-d H:i:s');
-            if ($model->save())
+            if ($model->save()) {
+
+                // A RFQ contains many products
+                // insert new records to rfq_product assignment for each product
+                foreach ($_POST['Rfq']['products'] as $productId) {
+                    $rfqProduct = new RfqProductAssignment;
+                    $rfqProduct->rfqid = $model->id;
+                    $rfqProduct->productid = $productId;
+                    if ($rfqProduct->save()) {
+                        // A product has many owners to recieve the emails 
+                        // insert new records to rfq_product_user for each product owner
+                        $EachProductOwners = UserProductAssignment::model()->findAll('productid=:productid', array(':productid' => $productId,));
+                        if ($EachProductOwners != null) {
+                            foreach ($EachProductOwners as $EachProductOwner) {  
+                                $rfqProductUserAssignment = new RfqProductUserAssignment;
+                                $rfqProductUserAssignment->rfqproductid = $rfqProduct->id;
+                                $rfqProductUserAssignment->userid = $EachProductOwner->userid;
+                                if ($rfqProductUserAssignment->save()){                                  
+                                }                               
+                            }
+                        }  
+                    }
+                }
                 $this->redirect(array('view', 'id' => $model->id));
+            }
         }
 
         $this->render('create', array(
@@ -84,10 +107,10 @@ class RfqController extends Controller {
      * @param integer $id the ID of the model to be updated
      */
     public function actionUpdate($id) {
-               if (!Yii::app()->user->checkAccess('updateRfq')) {
+        if (!Yii::app()->user->checkAccess('updateRfq')) {
             throw new CHttpException(403, 'You are not authorized to perform this action.');
         }
-        
+
         $model = $this->loadModel($id);
 
         // Uncomment the following line if AJAX validation is needed

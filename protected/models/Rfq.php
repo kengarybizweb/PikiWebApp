@@ -55,7 +55,7 @@ class Rfq extends CActiveRecord {
         return array(
             'user' => array(self::BELONGS_TO, 'User', 'userid'),
             'rfqProductAssignments' => array(self::HAS_MANY, 'RfqProductAssignment', 'rfqid'),
-             'product' => array(self::HAS_MANY, 'Product', 'id'),
+             'products' => array(self::HAS_MANY, 'Product', 'id'),
         );
     }
 

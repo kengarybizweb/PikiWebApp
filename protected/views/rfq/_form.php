@@ -20,25 +20,20 @@
 
     <div>
         <?php echo $form->labelEx($model, 'products'); ?>
-        
-        <?php  echo CHtml::activeCheckBoxList(
-                $model, // The car model
-                'product', // Contains the array of 'options' Id, used by this car model
-                CHtml::listData(Product::model()->findAll(), 'id', 'name'), // To get ALL the possible options 
-            array(
-                'labelOptions'=>array('style'=>'display:inline'),
-                'template' => '<div class="check-option">{input} {label}</div>',
-                'separator' => '',
-               )
-                
-                );
+
+        <?php
+        echo CHtml::activeCheckBoxList(
+                $model, 
+                'products',
+                CHtml::listData(Product::model()->findAll(), 'id', 'name'), 
+                array(
+            'labelOptions' => array('style' => 'display:inline'),
+            'template' => '<div class="check-option">{input} {label}</div>',
+            'separator' => '',
+                )
+        );
         ?>
-        
-        
-        
-        
-        
-        
+
         <?php echo $form->error($model, 'product'); ?>
     </div>
 
@@ -58,9 +53,9 @@
     </div-->
 
     <div class="row buttons">
-    <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+        <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     </div>
 
-<?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>
 
 </div><!-- form -->
