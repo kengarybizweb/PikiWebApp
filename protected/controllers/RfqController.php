@@ -82,16 +82,32 @@ class RfqController extends Controller {
                         // insert new records to rfq_product_user for each product owner
                         $EachProductOwners = UserProductAssignment::model()->findAll('productid=:productid', array(':productid' => $productId,));
                         if ($EachProductOwners != null) {
-                            foreach ($EachProductOwners as $EachProductOwner) {  
+                            foreach ($EachProductOwners as $EachProductOwner) {
                                 $rfqProductUserAssignment = new RfqProductUserAssignment;
                                 $rfqProductUserAssignment->rfqproductid = $rfqProduct->id;
                                 $rfqProductUserAssignment->userid = $EachProductOwner->userid;
-                                if ($rfqProductUserAssignment->save()){                                  
-                                }                               
+                                if ($rfqProductUserAssignment->save()) {
+              /* #Send Email */
+                Yii::import('ext.phpmailer.JPhpMailer');
+                $mail = new JPhpMailer;
+                $mail->IsSMTP();
+                $mail->Host = 'smpt.bizweb.sg';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'support@bizweb.sg';
+                $mail->Password = 'Grandfather26';
+                $mail->SetFrom('support@bizweb.sg', 'First Last');
+                $mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
+                $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                $mail->MsgHTML('<h1>JUST A TEST!</h1>');
+                $mail->AddAddress(User::model()->findByPk($rfqProductUserAssignment->userid)->email, 'John Doe');
+                $mail->Send();
+               /* Send Email #*/
+                                }
                             }
-                        }  
+                        }
                     }
                 }
+
                 $this->redirect(array('view', 'id' => $model->id));
             }
         }
