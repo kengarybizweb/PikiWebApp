@@ -31,19 +31,24 @@ class Controller extends CController {
      */
     public function accessRules() {
         return array(
-            array('allow', // allow all users to perform view, view details action
+            array('allow', // allow anonyomous users (both authenticated and not) to perform view, view details action
                 'controllers' => array('product', 'rfq', 'user'),
                 'actions' => array('index', 'view'),
                 'users' => array('*'),
             ),
-            array('allow', // allow all users to perform 'create' actions on user
+            array('allow', // allow anonyomous users to perform 'create' actions on user
                 'controllers' => array('user'),
                 'actions' => array('create'),
                 'users' => array('?'),
             ),
             array('allow', // allow authenticated user to perform 'create' and'addUser' actions
                 'controllers' => array('product', 'rfq', 'user'),
-                'actions' => array('create', 'addUser'),
+                'actions' => array('create', 'addUser','addProduct'),
+                'users' => array('@'),
+            ),
+             array('deny', // deny authenticated users to login again
+                'controllers' => array('site'),
+                 'actions' => array('login'),
                 'users' => array('@'),
             ),
             array('allow', // allow admin user to perform 'admin' and 'delete'actions
@@ -51,6 +56,7 @@ class Controller extends CController {
                 'actions' => array('admin', 'delete', 'update'),
                 'roles' => array('admin'),
             ),
+           
             array('deny', // deny all users
                 'controllers' => array('product', 'rfq', 'user'),
                 'users' => array('*'),

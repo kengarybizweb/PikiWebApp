@@ -37,7 +37,6 @@ class ProductUserForm extends CFormModel {
             array('email', 'verify'),
         );
     }
-
     /**
      * Authenticates the existence of the user in the system.
      * If valid, it will also make the association between the user, role and product
@@ -53,10 +52,8 @@ class ProductUserForm extends CFormModel {
             }
         }
     }
-
     public function assign() {
         if ($this->_user instanceof User) {
-
             //assign the user, in the specified role, to the product
             $this->product->assignUser($this->_user->id, $this->role);
             //add the association, along with the RBAC biz rule, to our RBAC hierarchy
@@ -68,21 +65,6 @@ class ProductUserForm extends CFormModel {
             $this->addError('email', 'Error when attempting to assign this user to the product.');
             return false;
         }
-    }
-
-    /**
-     * Generates an array of emails to use for the autocomplete
-     */
-    public function createEmailList() {
-        $sql = "SELECT email FROM piki_user";
-        $command = Yii::app()->db->createCommand($sql);
-        $rows = $command->queryAll();
-        //format it for use with auto complete widget
-        $emails = array();
-        foreach ($rows as $row) {
-            $emails[] = $row['email'];
-        }
-        return $emails;
     }
 }
 

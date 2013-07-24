@@ -60,22 +60,21 @@ class UserController extends Controller {
      */
     public function actionCreate() {
         $model = new User;
-         if (!Yii::app()->user->checkAccess('createUser')&&!(Yii::app()->user->isGuest)) {
+        if (!Yii::app()->user->checkAccess('createUser') && !(Yii::app()->user->isGuest)) {
             throw new CHttpException(403, 'You are not authorized to perform this action.');
         }
         //$user = $this->loadModel($id);
-        
-            if (isset($_POST['User'])) {
-                $model->attributes = $_POST['User'];
-                $model->role = 'member';
-                if ($model->save())
-                    $this->redirect(array('view', 'id' => $model->id));
-            }
 
-            $this->render('create', array(
-                'model' => $model,
-            ));
-        
+        if (isset($_POST['User'])) {
+            $model->attributes = $_POST['User'];
+            $model->role = 'member';
+            if ($model->save())
+                $this->redirect(array('view', 'id' => $model->id));
+        }
+
+        $this->render('create', array(
+            'model' => $model,
+        ));
     }
 
     /**
@@ -166,6 +165,28 @@ class UserController extends Controller {
             echo CActiveForm::validate($model);
             Yii::app()->end();
         }
+    }
+
+    public function actionAddproduct() {
+
+        $user = User::model()->findByPk(Yii::app()->user->id);
+        $form = new UserProductForm;
+
+        // collect user input data
+        if (isset($_POST['UserProductForm'])) {
+            $form->attributes = $_POST['UserProductForm'];
+            $form->user = $user;
+            foreach ($_POST['UserProductForm']['products'] as $productId) {
+                if ($form->assign($productId)) {
+                    
+                }
+            }
+            Yii::app()->user->setFlash('success', "Product has been added to the user.");
+            $form->unsetAttributes();
+            $form->clearErrors();
+        }
+        $form->user = $user;
+        $this->render('addproduct', array('model' => $form));
     }
 
 }

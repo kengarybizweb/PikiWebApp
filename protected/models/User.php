@@ -129,4 +129,34 @@ class User extends CActiveRecord {
         return $this->hashPassword($password) === $this->password;
         //return crypt($password,$this->password)===$this->password;
     }
+
+    public function assignProduct($productid) {
+        $command = Yii::app()->db->createCommand();
+        $command->insert('piki_user_product_assignment', array(
+            'userid' => $this->id,
+            'productid' => $productid,
+            'role' => 'owner',
+        ));
+    }
+
+    public function removeProduct($productid) {
+        $command = Yii::app()->db->createCommand();
+        $commmand->delete('piki_user_product_assignment', 'userid=:userid AND productid=:productid', array(
+            ':userid' => $this->id,
+            ':productid' => $productid,
+        ));
+    }
+
+    /*
+     * Determines whether or not a user is already part of a project
+     */
+
+    public function isProductAssignedToCurrentUser($product) {
+        $sql = "SELECT userid FROM piki_user_product_assignment WHERE productid=:productid AND userid=:userid";
+        $command = Yii::app()->db->createCommand($sql);
+        $command->bindValue(":productid", $product->id, PDO::PARAM_INT);
+        $command->bindValue(":userid", $this->id, PDO::PARAM_INT);
+        return $command->execute() == 1;
+    }
+
 }

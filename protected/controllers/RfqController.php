@@ -87,21 +87,21 @@ class RfqController extends Controller {
                                 $rfqProductUserAssignment->rfqproductid = $rfqProduct->id;
                                 $rfqProductUserAssignment->userid = $EachProductOwner->userid;
                                 if ($rfqProductUserAssignment->save()) {
-              /* #Send Email */
-                Yii::import('ext.phpmailer.JPhpMailer');
-                $mail = new JPhpMailer;
-                $mail->IsSMTP();
-                $mail->Host = 'smpt.bizweb.sg';
-                $mail->SMTPAuth = true;
-                $mail->Username = 'support@bizweb.sg';
-                $mail->Password = 'Grandfather26';
-                $mail->SetFrom('support@bizweb.sg', 'First Last');
-                $mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
-                $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
-                $mail->MsgHTML('<h1>JUST A TEST!</h1>');
-                $mail->AddAddress(User::model()->findByPk($rfqProductUserAssignment->userid)->email, 'John Doe');
-                $mail->Send();
-               /* Send Email #*/
+                                    /* #Send Email */
+                                    Yii::import('ext.phpmailer.JPhpMailer');
+                                    $mail = new JPhpMailer;
+                                    $mail->IsSMTP();
+                                    $mail->Host = 'smpt.bizweb.sg';
+                                    $mail->SMTPAuth = true;
+                                    $mail->Username = 'support@bizweb.sg';
+                                    $mail->Password = 'Grandfather26';
+                                    $mail->SetFrom('support@bizweb.sg', 'First Last');
+                                    $mail->Subject = 'PHPMailer Test Subject via smtp, basic with authentication';
+                                    $mail->AltBody = 'To view the message, please use an HTML compatible email viewer!';
+                                    $mail->MsgHTML('<h1>JUST A TEST!</h1>');
+                                    $mail->AddAddress(User::model()->findByPk($rfqProductUserAssignment->userid)->email, 'John Doe');
+                                    $mail->Send();
+                                    /* Send Email # */
                                 }
                             }
                         }
@@ -163,7 +163,14 @@ class RfqController extends Controller {
      * Lists all models.
      */
     public function actionIndex() {
-        $dataProvider = new CActiveDataProvider('Rfq');
+        //$dataProvider = new CActiveDataProvider('Rfq');
+
+        $dataProvider = new CActiveDataProvider('Rfq', array(
+            'criteria' => array(
+                'condition' => 'userid=:userid',
+                'params' => array(':userid' => Yii::app()->user->id),
+        )));
+
         $this->render('index', array(
             'dataProvider' => $dataProvider,
         ));
@@ -191,9 +198,10 @@ class RfqController extends Controller {
      * @throws CHttpException
      */
     public function loadModel($id) {
-        $model = Rfq::model()->findByPk($id);
+        $model = Rfq::model()->find('id=:id && userid=:userid', array(':id' => $id, ':userid' => Yii::app()->user->id));
+
         if ($model === null)
-            throw new CHttpException(404, 'The requested page does not exist.');
+            throw new CHttpException(403, 'You are not authorised to view.');
         return $model;
     }
 
