@@ -10,8 +10,9 @@ class UserProductForm extends CFormModel {
     /**
      * @var string username of the user being added to the project
      */
-    public $productname;
     public $products;
+    public $selectedproductids;
+
     /**
      * @var object an instance of the User AR model class
      */
@@ -24,16 +25,18 @@ class UserProductForm extends CFormModel {
         return array(
         );
     }
+
     /**
      * @return array relational rules.
-     */
+     
     public function relations() {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-            'products' => array(self::HAS_MANY, 'Product', 'id'),
+            //'products' => array(self::HAS_MANY, 'Product', 'id'),
+            'products' => array(self::HAS_MANY, 'Product', 'piki_user_product_assignment(productid)', 'index' => 'id'),
         );
-    }
+    }*/
 
     public function assign($productId) {
         $product = Product::model()->findByPk($productId);

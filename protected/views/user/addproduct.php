@@ -15,16 +15,21 @@ $this->pageTitle = Yii::app()->name . ' - Add Products To User';
         <?php echo $form->labelEx($model, 'products'); ?>
         <?php
         echo CHtml::activeCheckBoxList(
-                $model, 'products', CHtml::listData(Product::model()->findAll(), 'id', 'name'), array(
+                $model, 'preselectedproductids', CHtml::listData(Product::model()->findAll(), 'id', 'name'), array(
             'labelOptions' => array('style' => 'display:inline'),
             'template' => '<div class="check-option">{input} {label}</div>',
             'separator' => '',
                 )
         );
+        // echo CHtml::checkBoxList(
+        //'selectedproductids',
+        //array_keys($model->products),
+        //Chtml::listData(Product::model()->findAll(),'id','name')
+        //);
         ?>
     </div>   
     <div class="row buttons">
-        <?php echo CHtml::submitButton('Submit Products'); ?>
+<?php echo CHtml::submitButton('Submit Products'); ?>
     </div>
-    <?php $this->endWidget(); ?>
+        <?php $this->endWidget(); ?>
 </div>

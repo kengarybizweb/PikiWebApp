@@ -61,6 +61,7 @@ class Product extends CActiveRecord {
             'products' => array(self::HAS_MANY, 'Product', 'parentid'),
             'rfqProductAssignments' => array(self::HAS_MANY, 'RfqProductAssignment', 'productid'),
             'pikiUsers' => array(self::MANY_MANY, 'User', 'piki_user_product_assignment(productid, userid)'),
+            'userProductAssignment' => array(self::HAS_MANY, 'Product', 'piki_user_product_assignment(userid, productid)', 'index' => 'id'),
         );
     }
 

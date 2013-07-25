@@ -19,6 +19,15 @@
  */
 class User extends CActiveRecord {
 
+    public $products;
+    public $preselectedproductids;
+
+    /**
+     * @var object an instance of the User AR model class
+     */
+    //public $user;
+    private $_product;
+
     /**
      * Returns the static model of the specified AR class.
      * @param string $className active record class name.
@@ -45,8 +54,6 @@ class User extends CActiveRecord {
             array('email, password, company_name, business_reg_id', 'required'),
             array('email, password, company_name, business_reg_id', 'length', 'max' => 255),
             array('role', 'in', 'range' => array('member', 'owner', 'reader', 'admin'), 'allowEmpty' => false),
-            // The following rule is used by search().
-            // Please remove those attributes that should not be searched.
             array('id, email, password, company_name, business_reg_id, role', 'safe', 'on' => 'search'),
         );
     }
@@ -61,8 +68,14 @@ class User extends CActiveRecord {
             'rfqs' => array(self::HAS_MANY, 'Rfq', 'userid'),
             'pikiRfqProductAssignments' => array(self::MANY_MANY, 'RfqProductAssignment', 'piki_rfq_product_user_assignment(userid, rfqproductid)'),
             'role0' => array(self::BELONGS_TO, 'TblAuthItem', 'role'),
-            'pikiProducts' => array(self::MANY_MANY, 'Product', 'piki_user_product_assignment(userid, productid)'),
+            'pikiProducts' => array(self::MANY_MANY, 'Product', 'piki_user_product_assignment(userid, productid)', 'index' => 'id'),
+            'products' => array(self::MANY_MANY, 'Product', 'piki_user_product_assignment(userid, productid)', 'index' => 'id'),
         );
+    }
+
+    public function afterFind() {
+        $this->preselectedproductids = array_keys($this->products);
+        parent::afterFind();
     }
 
     /**
@@ -130,10 +143,22 @@ class User extends CActiveRecord {
         //return crypt($password,$this->password)===$this->password;
     }
 
+    public function assign($productId) {
+        $product = Product::model()->findByPk($productId);
+        $this->_product = $product;
+        if ($this->_product instanceof Product) {
+            $this->assignProduct($this->_product->id);
+            return true;
+        } else {
+            $this->addError('productname', 'Error when attempting to assign the products to the user.');
+            return false;
+        }
+    }
+
     public function assignProduct($productid) {
         $command = Yii::app()->db->createCommand();
         $command->insert('piki_user_product_assignment', array(
-            'userid' => $this->id,
+            'userid' => Yii::app()->user->id,
             'productid' => $productid,
             'role' => 'owner',
         ));
@@ -142,7 +167,7 @@ class User extends CActiveRecord {
     public function removeProduct($productid) {
         $command = Yii::app()->db->createCommand();
         $commmand->delete('piki_user_product_assignment', 'userid=:userid AND productid=:productid', array(
-            ':userid' => $this->id,
+            ':userid' => Yii::app()->user->id,
             ':productid' => $productid,
         ));
     }
@@ -151,11 +176,11 @@ class User extends CActiveRecord {
      * Determines whether or not a user is already part of a project
      */
 
-    public function isProductAssignedToCurrentUser($product) {
+    public function isProductAssignedToCurrentUser($productid) {
         $sql = "SELECT userid FROM piki_user_product_assignment WHERE productid=:productid AND userid=:userid";
         $command = Yii::app()->db->createCommand($sql);
-        $command->bindValue(":productid", $product->id, PDO::PARAM_INT);
-        $command->bindValue(":userid", $this->id, PDO::PARAM_INT);
+        $command->bindValue(":productid", $productid, PDO::PARAM_INT);
+        $command->bindValue(":userid", Yii::app()->user->id, PDO::PARAM_INT);
         return $command->execute() == 1;
     }
 

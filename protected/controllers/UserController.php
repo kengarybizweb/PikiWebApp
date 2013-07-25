@@ -168,24 +168,25 @@ class UserController extends Controller {
     }
 
     public function actionAddproduct() {
-
-        $user = User::model()->findByPk(Yii::app()->user->id);
-        $form = new UserProductForm;
+        $form = new User;
+        $preselectedproductids = array();
 
         // collect user input data
-        if (isset($_POST['UserProductForm'])) {
-            $form->attributes = $_POST['UserProductForm'];
-            $form->user = $user;
-            foreach ($_POST['UserProductForm']['products'] as $productId) {
-                if ($form->assign($productId)) {
-                    
+        if (isset($_POST['User'])) {
+            $form->attributes = $_POST['User'];
+            foreach ($_POST['User']['preselectedproductids'] as $productId) {
+                if ($form->isProductAssignedToCurrentUser($productId)) {
+                    array_push($preselectedproductids, $productId);
+                } else {
+                    if ($form->assign($productId)) {                        
+                    }
                 }
             }
             Yii::app()->user->setFlash('success', "Product has been added to the user.");
             $form->unsetAttributes();
             $form->clearErrors();
         }
-        $form->user = $user;
+        $form->preselectedproductids = $preselectedproductids;
         $this->render('addproduct', array('model' => $form));
     }
 

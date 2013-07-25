@@ -10,4 +10,4 @@ $this->pageTitle=Yii::app()->name;
 
 <div><a href="?r=rfq/create">New RFQ</a></div>
 <div><a href="?r=rfq/index">View RFQs History</a></div>
-<div><a href="?r=product/index">Edit Product Offering</a></div>
+<div><a href="?r=user/addproduct">Edit Product Offering</a></div>
