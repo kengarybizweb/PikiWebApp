@@ -170,20 +170,47 @@ class UserController extends Controller {
     public function actionAddproduct() {
         $form = new User;
         $preselectedproductids = array();
+        $unselectedproductids = array();
+        $allproducts = Product::model()->findAll();
+        foreach ($allproducts as $productId) {
+            if ($form->isProductAssignedToCurrentUser($productId->id)) {
+                array_push($preselectedproductids, $productId->id);
+                array_push($unselectedproductids, $productId->id);
+            }
+        }
 
         // collect user input data
         if (isset($_POST['User'])) {
             $form->attributes = $_POST['User'];
-            foreach ($_POST['User']['preselectedproductids'] as $productId) {
-                if ($form->isProductAssignedToCurrentUser($productId)) {
-                    array_push($preselectedproductids, $productId);
-                } else {
-                    if ($form->assign($productId)) {                        
+
+            if ($_POST['User']['preselectedproductids'] != null) {
+                foreach ($_POST['User']['preselectedproductids'] as $productId) {
+                    if ($form->isProductAssignedToCurrentUser($productId)) {
+                        $key = array_search($productId, $unselectedproductids);
+                        if ($key !== false) {
+                            unset($unselectedproductids[$key]);
+                        }
+                    } else {
+                        if ($form->assign($productId)) {
+                            array_push($preselectedproductids, $productId);
+                        }
                     }
                 }
             }
+
+
+            foreach ($unselectedproductids as $productid) {
+                $form->remove($productid);
+                $key = array_search($productid, $preselectedproductids);
+                if ($key !== false) {
+                    unset($preselectedproductids[$key]);
+                }
+            }
+
+
+
             Yii::app()->user->setFlash('success', "Product has been added to the user.");
-            $form->unsetAttributes();
+            //$form->unsetAttributes();
             $form->clearErrors();
         }
         $form->preselectedproductids = $preselectedproductids;

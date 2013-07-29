@@ -74,7 +74,7 @@ class User extends CActiveRecord {
     }
 
     public function afterFind() {
-        $this->preselectedproductids = array_keys($this->products);
+      //  $this->preselectedproductids = array_keys($this->products);
         parent::afterFind();
     }
 
@@ -154,6 +154,17 @@ class User extends CActiveRecord {
             return false;
         }
     }
+        public function remove($productId) {
+        $product = Product::model()->findByPk($productId);
+        $this->_product = $product;
+        if ($this->_product instanceof Product) {
+            $this->removeProduct($this->_product->id);
+            return true;
+        } else {
+            $this->addError('productname', 'Error when attempting to remove the products to the user.');
+            return false;
+        }
+    }
 
     public function assignProduct($productid) {
         $command = Yii::app()->db->createCommand();
@@ -166,7 +177,7 @@ class User extends CActiveRecord {
 
     public function removeProduct($productid) {
         $command = Yii::app()->db->createCommand();
-        $commmand->delete('piki_user_product_assignment', 'userid=:userid AND productid=:productid', array(
+        $command->delete('piki_user_product_assignment', 'userid=:userid AND productid=:productid', array(
             ':userid' => Yii::app()->user->id,
             ':productid' => $productid,
         ));
