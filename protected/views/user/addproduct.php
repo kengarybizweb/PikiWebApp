@@ -13,19 +13,38 @@ $this->pageTitle = Yii::app()->name . ' - Add Products To User';
         required.</p>
     <div class="row">
         <?php echo $form->labelEx($model, 'products'); ?>
+        
         <?php
-        echo CHtml::activeCheckBoxList(
+        /*echo CHtml::activeCheckBoxList(
                 $model, 'preselectedproductids', CHtml::listData(Product::model()->findAll(), 'id', 'name'), array(
             'labelOptions' => array('style' => 'display:inline'),
             'template' => '<div class="check-option">{input} {label}</div>',
             'separator' => '',
                 )
         );
-        // echo CHtml::checkBoxList(
-        //'selectedproductids',
-        //array_keys($model->products),
-        //Chtml::listData(Product::model()->findAll(),'id','name')
-        //);
+        */?>
+        
+        <?php
+        $tabArray = array();
+        foreach ((Product::model()->listParentChild(0)) as $productparent) {
+            array_push($tabArray, array('label' => $productparent['name'],
+                'content' => CHtml::activeCheckBoxList(
+                        $model, 'preselectedproductids', CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name'), array(
+                    'labelOptions' => array('style' => 'display:inline'),
+                    'template' => '<div class="check-option">{input} {label}</div>',
+                    'separator' => '',
+                        )
+                ), 'active' => ($productparent['id'] == 1 ? true : false),
+            ));
+        }
+        ?>   
+
+        <?php
+        $this->widget('bootstrap.widgets.TbTabs', array(
+            'type' => 'tabs', // 'tabs' or 'pills'
+            'placement' => 'left',
+            'tabs' => $tabArray,
+        ));
         ?>
     </div>   
     <div class="row buttons">

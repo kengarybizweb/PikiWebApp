@@ -7,14 +7,16 @@
 return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
     'name' => 'PikiWebApp',
+    'theme' => 'newtheme',
     'defaultController' => 'Site/Login',
     // preloading 'log' component
-    'preload' => array('log'),
+    'preload' => array('log',
+        'bootstrap',
+    ),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
         'application.components.*',
-        
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
@@ -24,6 +26,9 @@ return array(
             'password' => 'secret',
             // If removed, Gii defaults to localhost only. Edit carefully to taste.
             'ipFilters' => array('127.0.0.1', '::1'),
+            'generatorPaths' => array(
+                'bootstrap.gii'
+            ),
         ),
     ),
     // application components
@@ -31,6 +36,10 @@ return array(
         'user' => array(
             // enable cookie-based authentication
             'allowAutoLogin' => true,
+        ),
+        'bootstrap' => array(
+            'class' => 'ext.bootstrap.components.Bootstrap',
+            'responsiveCss' => true,
         ),
         // uncomment the following to enable URLs in path-format
         /*
@@ -73,18 +82,16 @@ return array(
                 array(
                     'class' => 'CFileLogRoute',
                     'levels' => 'error, warning,trace',
-                    'categories'=>'vardump',
+                    'categories' => 'vardump',
                 ),
-            // uncomment the following to show log messages on web pages
-            
-              array(
-              'class'=>'CWebLogRoute',
-                  'levels'=>'trace',
-                  'categories'=>'vardump',
-              ),
-             
+                // uncomment the following to show log messages on web pages
+                array(
+                    'class' => 'CWebLogRoute',
+                    'levels' => 'trace',
+                    'categories' => 'vardump',
+                ),
             ),
-        ), 
+        ),
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']

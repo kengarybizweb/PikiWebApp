@@ -18,41 +18,43 @@
     <?php echo $form->errorSummary($model); ?>
 
 
-    <div>
+    <div class="row">
         <?php echo $form->labelEx($model, 'products'); ?>
 
+
+        <br/><br/>
+
         <?php
-        echo CHtml::activeCheckBoxList(
-                $model, 
-                'products',
-                CHtml::listData(Product::model()->findAll(), 'id', 'name'), 
-                array(
-            'labelOptions' => array('style' => 'display:inline'),
-            'template' => '<div class="check-option">{input} {label}</div>',
-            'separator' => '',
-                )
-        );
+        $tabArray = array();
+        foreach ((Product::model()->listParentChild(0)) as $productparent) {
+            array_push($tabArray, array(
+                'label' => $productparent['name'],
+                'content' => CHtml::activeCheckBoxList(
+                        $model, 'products', CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name'), array(
+                    'labelOptions' => array('style' => 'display:inline'),
+                    'template' => '<div class="check-option">{input} {label}</div>',
+                    'separator' => '',
+                        )
+                ), 'active' => ($productparent['id'] == 1 ? true : false),
+            ));
+        }
+        ?>   
+
+        <?php
+        $this->widget('bootstrap.widgets.TbTabs', array(
+            'type' => 'tabs', // 'tabs' or 'pills'
+            'placement' => 'left',
+            'tabs' => $tabArray,
+        ));
         ?>
 
-        <?php echo $form->error($model, 'product'); ?>
+        <?php
+        echo $form->error($model, 'product');
+        ?>
     </div>
 
-
-
-
-    <!--div class="row">
-    <?php /* echo $form->labelEx($model,'userid'); ?>
-      <?php echo $form->textField($model,'userid'); ?>
-      <?php echo $form->error($model,'userid'); */ ?>
-    </div-->
-
-    <!--div class="row">
-    <?php /* echo $form->labelEx($model,'created_date'); ?>
-      <?php echo $form->textField($model,'created_date'); ?>
-      <?php echo $form->error($model,'created_date'); */ ?>
-    </div-->
-
     <div class="row buttons">
+        <br/><br/>
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     </div>
 

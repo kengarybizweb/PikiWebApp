@@ -147,5 +147,19 @@ class Product extends CActiveRecord {
         $command->bindValue(":userId", $user->id, PDO::PARAM_INT);
         return $command->execute() == 1;
     }
+    
+    public function listProductsParent() {
+        $sql = "SELECT * FROM piki_product WHERE parentid IS NOT NULL AND id in (
+            SELECT DISTINCT parentid FROM piki_product)";        
+        $productlist = Yii::app()->db->createCommand($sql)->queryAll();
+        return $productlist;
+    }
+    
+        public function listParentChild($parentid) {
+        $sql = "SELECT * FROM piki_product WHERE parentid=:parentid";        
+        $productlist = Yii::app()->db->createCommand($sql);
+        $productlist->bindValue(":parentid", $parentid, PDO::PARAM_INT);
+        return $productlist->queryAll();
+    }
 
 }
