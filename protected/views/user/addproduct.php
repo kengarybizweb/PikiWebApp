@@ -13,31 +13,30 @@ $this->pageTitle = Yii::app()->name . ' - Add Products To User';
         required.</p>
     <div class="row">
         <?php echo $form->labelEx($model, 'products'); ?>
-        
-        <?php
-        /*echo CHtml::activeCheckBoxList(
-                $model, 'preselectedproductids', CHtml::listData(Product::model()->findAll(), 'id', 'name'), array(
-            'labelOptions' => array('style' => 'display:inline'),
-            'template' => '<div class="check-option">{input} {label}</div>',
-            'separator' => '',
-                )
-        );
-        */?>
-        
+
+        <?php /* echo CHtml::activeCheckBoxList(
+          $model, 'preselectedproductids', CHtml::listData(Product::model()->findAll(), 'id', 'name'), array(
+          'labelOptions' => array('style' => 'display:inline'),
+          'template' => '<div class="check-option">{input} {label}</div>',
+          'separator' => '',
+          )
+          );
+         */ ?>
+
+
+
         <?php
         $tabArray = array();
         foreach ((Product::model()->listParentChild(0)) as $productparent) {
-            array_push($tabArray, array('label' => $productparent['name'],
-                'content' => CHtml::activeCheckBoxList(
-                        $model, 'preselectedproductids', CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name'), array(
-                    'labelOptions' => array('style' => 'display:inline'),
-                    'template' => '<div class="check-option">{input} {label}</div>',
-                    'separator' => '',
-                        )
+            $fieldname = 'product' . $productparent['id'];
+            array_push($tabArray, array(
+                'label' => $productparent['name'],
+                'content' => CHtml::checkBoxList(
+                        $fieldname, $model->preselectedproductids, CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name')
                 ), 'active' => ($productparent['id'] == 1 ? true : false),
             ));
         }
-        ?>   
+        ?>        
 
         <?php
         $this->widget('bootstrap.widgets.TbTabs', array(
@@ -47,8 +46,16 @@ $this->pageTitle = Yii::app()->name . ' - Add Products To User';
         ));
         ?>
     </div>   
+    
+    
+        <div class="row">		
+		<?php echo $form->hiddenField($model,'id',array('value'=>Yii::app()->user->id)); ?>
+		<?php echo $form->error($model,'id'); ?>
+	</div>
+
+    
     <div class="row buttons">
-<?php echo CHtml::submitButton('Submit Products'); ?>
+        <?php echo CHtml::submitButton('Submit Products'); ?>
     </div>
-        <?php $this->endWidget(); ?>
+    <?php $this->endWidget(); ?>
 </div>

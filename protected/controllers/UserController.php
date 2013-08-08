@@ -183,22 +183,23 @@ class UserController extends Controller {
         if (isset($_POST['User'])) {
             $form->attributes = $_POST['User'];
 
-            if ($_POST['User']['preselectedproductids'] != null) {
-                foreach ($_POST['User']['preselectedproductids'] as $productId) {
-                    if ($form->isProductAssignedToCurrentUser($productId)) {
-                        $key = array_search($productId, $unselectedproductids);
-                        if ($key !== false) {
-                            unset($unselectedproductids[$key]);
-                        }
-                    } else {
-                        if ($form->assign($productId)) {
-                            array_push($preselectedproductids, $productId);
+            foreach ((Product::model()->listParentChild(0)) as $productparent) {
+                if (isset($_POST['product' . $productparent['id']])) {
+                    foreach ($_POST['product' . $productparent['id']] as $productId) {
+                        if ($form->isProductAssignedToCurrentUser($productId)) {
+                            $key = array_search($productId, $unselectedproductids);
+                            if ($key !== false) {
+                                unset($unselectedproductids[$key]);
+                            }
+                        } else {
+                            if ($form->assign($productId)) {
+                                array_push($preselectedproductids, $productId);
+                            }
                         }
                     }
                 }
             }
-
-
+            
             foreach ($unselectedproductids as $productid) {
                 $form->remove($productid);
                 $key = array_search($productid, $preselectedproductids);
@@ -206,8 +207,6 @@ class UserController extends Controller {
                     unset($preselectedproductids[$key]);
                 }
             }
-
-
 
             Yii::app()->user->setFlash('success', "Product has been added to the user.");
             //$form->unsetAttributes();
@@ -218,3 +217,4 @@ class UserController extends Controller {
     }
 
 }
+

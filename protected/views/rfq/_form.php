@@ -21,24 +21,24 @@
     <div class="row">
         <?php echo $form->labelEx($model, 'products'); ?>
 
+        
+        
 
         <br/><br/>
 
         <?php
+        
         $tabArray = array();
         foreach ((Product::model()->listParentChild(0)) as $productparent) {
+            $fieldname = 'product'.$productparent['id'];            
             array_push($tabArray, array(
                 'label' => $productparent['name'],
-                'content' => CHtml::activeCheckBoxList(
-                        $model, 'products', CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name'), array(
-                    'labelOptions' => array('style' => 'display:inline'),
-                    'template' => '<div class="check-option">{input} {label}</div>',
-                    'separator' => '',
-                        )
+                'content' => CHtml::checkBoxList(
+                        $fieldname, array_keys($model->products), CHtml::listData(Product::model()->listParentChild($productparent['id']), 'id', 'name')
                 ), 'active' => ($productparent['id'] == 1 ? true : false),
             ));
         }
-        ?>   
+        ?> 
 
         <?php
         $this->widget('bootstrap.widgets.TbTabs', array(
@@ -53,6 +53,12 @@
         ?>
     </div>
 
+    	<div class="row">		
+		<?php echo $form->hiddenField($model,'userid',array('value'=>Yii::app()->user->id)); ?>
+		<?php echo $form->error($model,'userid'); ?>
+	</div>
+    
+    
     <div class="row buttons">
         <br/><br/>
         <?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
